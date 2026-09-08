@@ -1,0 +1,31 @@
+name: timer
+version: 0.1.0
+spec: "0.1"
+kind: ip
+lang: bsv
+identity:
+  slug: timer-tapeout-bsv
+  display_name: General-purpose timer
+  summary: Several channels with compare and capture.
+  category: peripheral
+  subcategories: [timer]
+  ip_family: timer
+  integration_profile: [apb4-slave]
+  maturity: planned
+contract:
+  version: 1
+  ctrl: { shape: flat, aw: 8, dw: 32 }
+  irq:
+    - { name: irq, kind: level }
+params:
+  channels: { type: int, default: 2, range: [1, 8] }
+features:
+  capture: { type: bool, default: false }
+emit:
+  - kind: bsv
+    package: Timer
+    module: mkTimer
+    config_type: TimerCfg
+    interface: TimerIfc
+deps:
+  hwcore: "^0.1"

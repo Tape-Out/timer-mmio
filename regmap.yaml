@@ -1,0 +1,34 @@
+ip: timer
+contract: { aw: 8, dw: 32 }
+base: 0x10002000
+size: 0x100
+params: [channels]
+regs:
+  - name: ctrl
+    offset: 0x00
+    desc: global control
+    fields:
+      - { name: en,   bits: "0:0", sw: rw, hw: r, reset: 0 }
+      - { name: rst,  bits: "1:1", sw: rw, hw: r, reset: 0 }
+  - name: presc
+    offset: 0x04
+    desc: prescaler
+    fields: [ { name: val, width: 16, sw: rw, hw: r, reset: 0 } ]
+  - name: cnt
+    offset: 0x08
+    desc: free running counter
+    fields: [ { name: val, width: 32, sw: r, hw: rw, volatile: true } ]
+  - name: cmp
+    offset: 0x10
+    desc: compare value, one per channel
+    array: { count: channels, stride: 4 }
+    fields: [ { name: val, width: 32, sw: rw, hw: r, reset: 0 } ]
+  - name: ista
+    offset: 0x40
+    desc: match status, write one to clear
+    fields:
+      - { name: val, width: 8, sw: rw, onwrite: woclr, hw: r, hwset: true, stickybit: true, reset: 0 }
+  - name: ien
+    offset: 0x44
+    desc: match interrupt enable
+    fields: [ { name: val, width: 8, sw: rw, hw: r, reset: 0 } ]

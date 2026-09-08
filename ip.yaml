@@ -1,6 +1,6 @@
 name: timer
 version: 0.1.0
-spec: "0.1"
+spec: '0.1'
 kind: ip
 lang: bsv
 identity:
@@ -8,24 +8,108 @@ identity:
   display_name: General-purpose timer
   summary: Several channels with compare and capture.
   category: peripheral
-  subcategories: [timer]
+  subcategories:
+  - timer
   ip_family: timer
-  integration_profile: [apb4-slave]
+  integration_profile:
+  - apb4-slave
   maturity: planned
 contract:
   version: 1
-  ctrl: { shape: flat, aw: 8, dw: 32 }
+  ctrl:
+    shape: flat
+    aw: 8
+    dw: 32
   irq:
-    - { name: irq, kind: level }
+  - name: irq
+    kind: level
 params:
-  channels: { type: int, default: 2, range: [1, 8] }
+  channels:
+    type: int
+    default: 2
+    range:
+    - 1
+    - 8
 features:
-  capture: { type: bool, default: false }
+  capture:
+    type: bool
+    default: false
+    area:
+      points:
+        '1': 105.56
+        '2': 187.04
+        '4': 275.8
+        '8': 423.64
+      per: channels
 emit:
-  - kind: bsv
-    package: Timer
-    module: mkTimer
-    config_type: TimerCfg
-    interface: TimerIfc
+- kind: bsv
+  package: Timer
+  module: mkTimer
+  config_type: TimerCfg
+  interface: TimerIfc
+  ctrl: regs
+  pins:
+  - name: pins
+    type: TimerPins
+    targs:
+    - channels
+- kind: verilog-flat
+  bus: apb4
 deps:
-  hwcore: "^0.1"
+  hwcore: ^0.1
+  amba: ^0.1
+area:
+  base:
+    points:
+      '1': 2172.52
+      '2': 3072.72
+      '4': 4848.48
+      '8': 8494.08
+    per: channels
+  margin: 0.0302
+  model: points-additive
+  error:
+    bound: 0.043
+    sign: over
+    note: parameter curves stored as measured points, features added on top, then
+      lifted by 0.0302 so that no untested combination predicts under; the worst came
+      in 2.52 percent under before the lift
+  measured:
+  - at:
+      channels: 1
+      capture: false
+    um2: 2172.52
+  - at:
+      channels: 2
+      capture: false
+    um2: 3072.72
+  - at:
+      channels: 4
+      capture: false
+    um2: 4848.48
+  - at:
+      channels: 8
+      capture: false
+    um2: 8494.08
+  - at:
+      channels: 1
+      capture: true
+    um2: 2278.08
+  - at:
+      channels: 2
+      capture: true
+    um2: 3259.76
+  - at:
+      channels: 4
+      capture: true
+    um2: 5124.28
+  - at:
+      channels: 8
+      capture: true
+    um2: 8917.72
+  corner:
+    tool: ecc
+    pdk: ics55
+    freq_mhz: 100
+    measured: '2026-09-08'
+    gen_digest: sha256:698cb4d0cb6de0bf

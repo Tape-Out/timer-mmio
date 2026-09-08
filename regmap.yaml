@@ -23,6 +23,12 @@ regs:
     desc: compare value, one per channel
     array: { count: channels, stride: 4 }
     fields: [ { name: val, width: 32, sw: rw, hw: r, reset: 0 } ]
+  - name: capt
+    offset: 0x30
+    desc: counter latched on the channel input edge
+    feature: capture
+    array: { count: channels, stride: 4 }
+    fields: [ { name: val, width: 32, sw: r, hw: w, reset: 0 } ]
   - name: ista
     offset: 0x40
     desc: match status, write one to clear

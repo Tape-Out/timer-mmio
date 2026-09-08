@@ -33,6 +33,9 @@ module mkTimer#(TimerCfg cfg)(TimerIfc#(aw, dw, channels))
   // 三者首尾相接成环。ConfigReg 让读恒取旧值，环就断了（D39）。
   Reg#(Bit#(32)) cnt  <- mkConfigReg(0);
   Reg#(Bit#(16)) div  <- mkReg(0);
+  // 上一拍的计数值。比较按「到达」而不是按电平：比较值复位是 0、
+  // 计数器复位也是 0，按电平的话一使能所有通道当场全部比中。
+  Reg#(Bit#(32)) prevCnt <- mkConfigReg(0);
 
   rule tick;
     r.cnt_in(cnt);
@@ -52,8 +55,9 @@ module mkTimer#(TimerCfg cfg)(TimerIfc#(aw, dw, channels))
   rule cmpHit (r.ctrl_en == 1);
     Bit#(8) hit = 0;
     for (Integer i = 0; i < valueOf(channels); i = i + 1)
-      if (cnt == r.cmp[i]) hit[i] = 1;
+      if (cnt == r.cmp[i] && cnt != prevCnt) hit[i] = 1;
     r.ista_set(hit);
+    prevCnt <= cnt;
   endrule
 
   Wire#(Bit#(channels)) capt     <- mkBypassWire;
